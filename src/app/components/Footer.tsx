@@ -14,14 +14,14 @@ const Footer = () => {
     <footer className="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 z-10">
       <div className="flex justify-around">
         <button 
-          onClick={() => navigateToPage('/list')} 
+          onClick={() => navigateToPage('/')} 
           className="flex flex-col items-center"
         >
           <List size={24} />
           <span className="text-xs mt-1">一覧</span>
         </button>
         <button 
-          onClick={() => navigateToPage('/users')} 
+          onClick={() => navigateToPage('/friends')} 
           className="flex flex-col items-center"
         >
           <Users size={24} />
