@@ -90,7 +90,7 @@ model Loan {
   title             String
   total_amount      Float
   remaining_amount  Float
-  status            String
+  status            LoanStatus @default(PAYING)
   registered_at     DateTime
   created_at        DateTime       @default(now())
   updated_at        DateTime       @updatedAt
@@ -107,11 +107,16 @@ model LoanHistory {
   loan_id          String
   paid_at          DateTime
   paid_amount      Float
-  memo             String?
+  memo             String
   created_at       DateTime    @default(now())
   updated_at       DateTime    @updatedAt
 
   loan             Loan        @relation(fields: [loan_id], references: [loan_id])
 
   @@map("loan_histories")
+}
+
+enum LoanStatus {
+  PAYING
+  PAID
 }
