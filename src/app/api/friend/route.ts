@@ -18,6 +18,21 @@ export async function GET(request: Request) {
   }
 
   try {
+    // 現在のユーザーを取得
+    const currentUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+
+    if (!currentUser) {
+      return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
+    }
+
+    // 検索対象のユーザーが自分自身でないことを確認
+    if (searchId === currentUser.id) {
+      return NextResponse.json({ success: false, error: "自分自身は追加できません" }, { status: 400 });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: searchId },
       select: {
@@ -28,7 +43,6 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log(user)
     if (!user) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }

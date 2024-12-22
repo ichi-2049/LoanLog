@@ -1,25 +1,25 @@
+"use client"
 import { ReactNode } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { headers } from 'next/headers';
+import { usePathname } from 'next/navigation'; // App Routerの機能
 import './globals.css'; 
 
 interface RootLayoutProps {
   children: ReactNode;
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
-  const headersList = headers();
-  const pathname = (await headersList).get('x-invoke-path') || '';
+export default function RootLayout({ children }: RootLayoutProps) {
+  const pathname = usePathname(); // 現在のパスを取得
   const isLoginPage = pathname === '/login';
 
   // パスに基づいてタイトルを決定する関数
   const getTitle = (path: string) => {
     switch (path) {
-      case '/list':
+      case '/':
         return 'ローン一覧';
-      case '/users':
-        return '相手一覧';
+      case '/friends':
+        return '友達一覧';
       case '/settings':
         return '設定';
       default:
