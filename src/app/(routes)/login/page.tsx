@@ -12,7 +12,6 @@ export default function LoginPage() {
         <div className="space-y-4">
           <p className="text-gray-300 text-center text-sm">
             簡単にローンを管理できるアプリです。<br />
-            Googleアカウントでログインしてください。
           </p>
           
           <button
