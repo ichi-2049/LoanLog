@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useFriend } from '../hooks/useFriend';
+import Image from 'next/image';
+
 
 export const FriendSearch = () => {
   const [searchId, setSearchId] = useState('');
@@ -114,12 +116,14 @@ export const FriendSearch = () => {
           {friends.map((friend) => (
             <div key={friend.id} className="bg-gray-700 p-4 rounded">
               <div className="flex items-center gap-4">
-                {friend.image && (
-                  <img
+              {friend.image && (
+                <Image
                     src={friend.image}
                     alt={friend.name || ''}
-                    className="w-10 h-10 rounded-full"
-                  />
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                />
                 )}
                 <div>
                   <p className="text-white">{friend.name || 'No Name'}</p>
