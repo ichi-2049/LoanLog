@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useFriend } from '../hooks/useFriend';
 import Image from 'next/image';
-
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const FriendSearch = () => {
   const [searchId, setSearchId] = useState('');
+  const { data: session } = useSession();
   const { 
     isSearching, 
     isAdding, 
@@ -19,7 +22,19 @@ export const FriendSearch = () => {
 
   useEffect(() => {
     loadFriends();
-  }, [loadFriends]); // 初回のみ実行する
+  }, [loadFriends]);
+
+  const handleCopyId = async () => {
+    if (session?.user?.id) {
+      try {
+        await navigator.clipboard.writeText(session.user.id);
+        toast.success("IDをクリップボードにコピーしました", { autoClose: 3000 });
+      } catch (err) {
+        console.error(err)
+        toast.error("コピーに失敗しました", { autoClose: 3000 });
+      }
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,11 +47,11 @@ export const FriendSearch = () => {
     if (searchResult?.user) {
       const result = await addFriend(searchResult.user.id);
       if (result.success) {
-        alert('友達を追加しました！');
+        toast.success("友達を追加しました！", { autoClose: 3000 });
         setSearchId('');
-        loadFriends(); // 友達リストを更新
+        loadFriends();
       } else {
-        alert(result.error || '友達の追加に失敗しました');
+        toast.error(result.error || '友達の追加に失敗しました', { autoClose: 3000 });
       }
     }
   };
@@ -47,6 +62,43 @@ export const FriendSearch = () => {
 
   return (
     <div className="space-y-6">
+      {/* ユーザープロファイルセクション */}
+      <div className="p-4 bg-gray-800 rounded-lg">
+  <h2 className="text-xl font-bold mb-4 text-white">あなたのプロフィール</h2>
+  <div className="bg-gray-700 p-4 rounded">
+    <div className="flex items-center gap-4">
+      {session?.user?.image && (
+        <Image
+          src={session.user.image}
+          alt={session.user.name || ''}
+          width={40}
+          height={40}
+          className="rounded-full"
+        />
+      )}
+      <div className="flex-grow">
+        {/* 名前とメール */}
+        <p className="text-white">{session?.user?.name || 'No Name'}</p>
+        <p className="text-gray-400 text-sm">{session?.user?.email}</p>
+        
+        {/* IDとボタン */}
+        <div className="flex items-center gap-2 mt-2">
+          <p className="text-sm text-gray-400">ID: {session?.user?.id}</p>
+          <button
+            onClick={handleCopyId}
+            className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+          >
+            copy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+      {/* 友達追加セクション */}
       <div className="p-4 bg-gray-800 rounded-lg">
         <h2 className="text-xl font-bold mb-4 text-white">友達追加</h2>
         
@@ -110,20 +162,21 @@ export const FriendSearch = () => {
         )}
       </div>
 
+      {/* 友達一覧セクション */}
       <div className="p-4 bg-gray-800 rounded-lg">
         <h2 className="text-xl font-bold mb-4 text-white">友達一覧</h2>
         <div className="space-y-3">
           {friends.map((friend) => (
             <div key={friend.id} className="bg-gray-700 p-4 rounded">
               <div className="flex items-center gap-4">
-              {friend.image && (
-                <Image
+                {friend.image && (
+                  <Image
                     src={friend.image}
                     alt={friend.name || ''}
                     width={40}
                     height={40}
                     className="rounded-full"
-                />
+                  />
                 )}
                 <div>
                   <p className="text-white">{friend.name || 'No Name'}</p>

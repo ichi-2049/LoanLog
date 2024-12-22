@@ -2,7 +2,8 @@
 import { ReactNode } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { usePathname } from 'next/navigation'; // App Routerの機能
+import { usePathname } from 'next/navigation';
+import { SessionProvider } from 'next-auth/react';
 import './globals.css'; 
 
 interface RootLayoutProps {
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       case '/':
         return 'ローン一覧';
       case '/friends':
-        return '友達一覧';
+        return '友達';
       case '/settings':
         return '設定';
       default:
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           ${!isLoginPage ? 'pt-16 pb-24' : ''} 
           min-h-screen
         `}>
-          {children}
+          <SessionProvider>{children}</SessionProvider>
         </main>
         {!isLoginPage && <Footer />}
       </body>
