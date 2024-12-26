@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loan, LoanViewType } from '../types/loans';
+import { Loan, LoanViewType } from '../types/loan';
 
 export const useLoans = () => {
   const [loans, setLoans] = useState<Loan[]>([]);

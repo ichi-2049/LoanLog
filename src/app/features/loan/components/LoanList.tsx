@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useLoans } from '../hooks/useLoans';
+import { FloatingActionButton } from '@/app/components/FloatingActionButton';
 
 export const LoanList = () => {
     const { loans, viewType, setViewType, isLoading } = useLoans();
@@ -71,9 +72,7 @@ export const LoanList = () => {
           ))}
         </div>
   
-        <button className="fixed bottom-20 right-4 w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg">
-          <span className="text-2xl">+</span>
-        </button>
+        <FloatingActionButton href="/loan/register" />
       </div>
     );
   };

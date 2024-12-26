@@ -14,5 +14,20 @@ export type Loan = {
       name: string;
     };
   };
+ 
+  export type Friend = {
+    id: string;
+    name: string;
+    email: string;
+    image: string;
+  };
   
+  export type LoanFormData = {
+    title: string;
+    amount: number;
+    friendId: string;
+    type: LoanViewType;
+  };
+
   export type LoanViewType = 'creditor' | 'debtor';
+
