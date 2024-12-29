@@ -6,7 +6,7 @@ import { useLoanHistoryRegistration } from '../hooks/useLoanHistoryRegistration'
 interface LoanHistoryFormProps {
   loanId: string;
   onCancel: () => void;
-  onSuccess: () => void;
+  onSuccess: () => Promise<void>;
 }
 
 export const LoanHistoryForm = ({ loanId, onCancel, onSuccess }: LoanHistoryFormProps) => {
@@ -19,11 +19,14 @@ export const LoanHistoryForm = ({ loanId, onCancel, onSuccess }: LoanHistoryForm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await registerHistory({
+    const isSuccess = await registerHistory({
       ...formData,
       paid_amount: Number(formData.paid_amount),
     });
-    onSuccess();
+
+    if (isSuccess) {
+      await onSuccess();
+    }
   };
 
   return (

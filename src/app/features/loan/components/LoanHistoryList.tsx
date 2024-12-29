@@ -2,47 +2,59 @@
 
 import { useState } from 'react';
 import { useLoanHistory } from '../hooks/useLoanHistory';
+import { useLoan } from '../hooks/useLoan';
 import { LoanHistoryForm } from './LoanHistoryForm';
 
 interface LoanHistoryListProps {
   loanId: string;
-  title: string;
-  totalAmount: number;
-  remainingAmount: number;
-  partnerName: string;
+  initialTitle: string;
+  initialTotalAmount: number;
+  initialRemainingAmount: number;
+  initialPartnerName: string;
 }
 
 export const LoanHistoryList = ({
   loanId,
-  title,
-  totalAmount,
-  remainingAmount,
-  partnerName,
+  initialTitle,
+  initialTotalAmount,
+  initialRemainingAmount,
+  initialPartnerName,
 }: LoanHistoryListProps) => {
-  const { histories, isLoading } = useLoanHistory(loanId);
+  const { histories, isLoading: isLoadingHistories, refetch: refetchHistories } = useLoanHistory(loanId);
+  const { loan, isLoading: isLoadingLoan, refetch: refetchLoan } = useLoan(loanId);
   const [showForm, setShowForm] = useState(false);
 
-  if (isLoading) {
+  const handleSuccess = async () => {
+    await Promise.all([refetchHistories(), refetchLoan()]);
+    setShowForm(false);
+  };
+
+  if (isLoadingHistories || isLoadingLoan) {
     return <div className="flex justify-center p-8">Loading...</div>;
   }
+
+  const currentTitle = loan?.title ?? initialTitle;
+  const currentTotalAmount = loan?.total_amount ?? initialTotalAmount;
+  const currentRemainingAmount = loan?.remaining_amount ?? initialRemainingAmount;
+  const currentPartnerName = loan?.creditor.name ?? initialPartnerName;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="bg-gray-700 rounded-lg p-4 mb-4">
         <div className="text-white">
-          <h2 className="text-xl font-bold mb-2">{title}</h2>
+          <h2 className="text-xl font-bold mb-2">{currentTitle}</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-gray-300">相手</p>
-              <p>{partnerName}</p>
+              <p>{currentPartnerName}</p>
             </div>
             <div>
               <p className="text-gray-300">合計金額</p>
-              <p>¥{totalAmount.toLocaleString()}</p>
+              <p>¥{currentTotalAmount.toLocaleString()}</p>
             </div>
             <div>
               <p className="text-gray-300">残額</p>
-              <p>¥{remainingAmount.toLocaleString()}</p>
+              <p>¥{currentRemainingAmount.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -76,7 +88,7 @@ export const LoanHistoryList = ({
         <LoanHistoryForm
           loanId={loanId}
           onCancel={() => setShowForm(false)}
-          onSuccess={() => setShowForm(false)}
+          onSuccess={handleSuccess}
         />
       ) : (
         <button

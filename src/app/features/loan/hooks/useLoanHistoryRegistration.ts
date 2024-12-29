@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { LoanHistoryFormData } from '../types/loanHistory';
 
 export const useLoanHistoryRegistration = (loanId: string) => {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const registerHistory = async (data: LoanHistoryFormData) => {
+  const registerHistory = async (data: LoanHistoryFormData): Promise<boolean> => {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/loan/${loanId}/history`, {
@@ -17,14 +15,17 @@ export const useLoanHistoryRegistration = (loanId: string) => {
         body: JSON.stringify(data),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error('登録に失敗しました');
+        throw new Error(result.error || '登録に失敗しました');
       }
 
-      router.refresh();
+      return true;
     } catch (error) {
       console.error(error);
       alert('登録に失敗しました');
+      return false;
     } finally {
       setIsLoading(false);
     }

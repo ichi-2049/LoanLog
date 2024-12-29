@@ -47,10 +47,10 @@ export default async function LoanDetailPage({ params }: LoanDetailPageProps) {
     <div className="container mx-auto py-8">
       <LoanHistoryList
         loanId={loan.loan_id}
-        title={loan.title}
-        totalAmount={loan.total_amount}
-        remainingAmount={loan.remaining_amount}
-        partnerName={loan.creditor.name}
+        initialTitle={loan.title}
+        initialTotalAmount={loan.total_amount}
+        initialRemainingAmount={loan.remaining_amount}
+        initialPartnerName={loan.creditor.name || '不明'}
       />
     </div>
   );
