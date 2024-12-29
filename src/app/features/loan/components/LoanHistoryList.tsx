@@ -6,6 +6,7 @@ import { useLoanHistory } from '../hooks/useLoanHistory';
 import { useLoan } from '../hooks/useLoan';
 import { LoanHistoryForm } from './LoanHistoryForm';
 import { LoanHistoryEditForm } from './LoanHistoryEditForm';
+import { LoanEditForm } from './LoanEditForm';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 import { LoanDeleteConfirmationModal } from './LoanDeleteConfirmationModal';
 import { Trash2, PenLine } from 'lucide-react';
@@ -36,6 +37,7 @@ export const LoanHistoryList = ({
  const [deletingHistory, setDeletingHistory] = useState<LoanHistory | null>(null);
  const [isDeleting, setIsDeleting] = useState(false);
  const [showLoanDeleteModal, setShowLoanDeleteModal] = useState(false);
+ const [showLoanEditModal, setShowLoanEditModal] = useState(false);
  const [isDeletingLoan, setIsDeletingLoan] = useState(false);
 
  const handleSuccess = async () => {
@@ -117,12 +119,20 @@ export const LoanHistoryList = ({
        <div className="text-white">
          <div className="flex justify-between items-start mb-4">
            <h2 className="text-xl font-bold">{currentTitle}</h2>
-           <button
-             onClick={() => setShowLoanDeleteModal(true)}
-             className="px-3 py-1 text-sm bg-gray-600 rounded-lg hover:bg-gray-500"
-           >
-             <Trash2 className="h-4 w-4" />
-           </button>
+           <div className="flex gap-2">
+             <button
+               onClick={() => setShowLoanEditModal(true)}
+               className="px-3 py-1 text-sm bg-gray-600 rounded-lg hover:bg-gray-500"
+             >
+               <PenLine className="h-4 w-4" />
+             </button>
+             <button
+               onClick={() => setShowLoanDeleteModal(true)}
+               className="px-3 py-1 text-sm bg-gray-600 rounded-lg hover:bg-gray-500"
+             >
+               <Trash2 className="h-4 w-4" />
+             </button>
+           </div>
          </div>
          <div className="grid grid-cols-2 gap-4">
            <div>
@@ -216,6 +226,19 @@ export const LoanHistoryList = ({
          onConfirm={handleLoanDelete}
          onCancel={() => setShowLoanDeleteModal(false)}
          isLoading={isDeletingLoan}
+       />
+     )}
+
+     {showLoanEditModal && (
+       <LoanEditForm
+         loanId={loanId}
+         currentTitle={currentTitle}
+         currentTotalAmount={currentTotalAmount}
+         onCancel={() => setShowLoanEditModal(false)}
+         onSuccess={async () => {
+           await refetchLoan();
+           setShowLoanEditModal(false);
+         }}
        />
      )}
    </div>
