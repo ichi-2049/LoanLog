@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { useLoanHistory } from '../hooks/useLoanHistory';
 import { useLoan } from '../hooks/useLoan';
 import { LoanHistoryForm } from './LoanHistoryForm';
+import { LoanHistoryEditForm } from './LoanHistoryEditForm';
+import { DeleteConfirmationModal } from './DeleteConfirmationModal';
+import { Trash2, PenLine } from 'lucide-react';
+import { LoanHistory } from '../types/loanHistory';
 
 interface LoanHistoryListProps {
   loanId: string;
@@ -25,10 +29,47 @@ export const LoanHistoryList = ({
   const { histories, isLoading: isLoadingHistories, refetch: refetchHistories } = useLoanHistory(loanId);
   const { loan, isLoading: isLoadingLoan, refetch: refetchLoan } = useLoan(loanId);
   const [showForm, setShowForm] = useState(false);
+  const [editingHistory, setEditingHistory] = useState<LoanHistory | null>(null);
+  const [deletingHistory, setDeletingHistory] = useState<LoanHistory | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSuccess = async () => {
     await Promise.all([refetchHistories(), refetchLoan()]);
     setShowForm(false);
+  };
+
+  const handleEdit = (history: LoanHistory) => {
+    setEditingHistory(history);
+  };
+
+  const handleDelete = async (history: LoanHistory) => {
+    setDeletingHistory(history);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingHistory) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(
+        `/api/loan/${loanId}/history/${deletingHistory.loan_history_id}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('削除に失敗しました');
+      }
+
+      await Promise.all([refetchHistories(), refetchLoan()]);
+    } catch (error) {
+      console.error(error);
+      alert('削除に失敗しました');
+    } finally {
+      setIsDeleting(false);
+      setDeletingHistory(null);
+    }
   };
 
   if (isLoadingHistories || isLoadingLoan) {
@@ -79,11 +120,20 @@ export const LoanHistoryList = ({
                 </p>
                 <p className="font-bold">¥{history.paid_amount.toLocaleString()}</p>
               </div>
-              <button
-                className="px-3 py-1 text-sm bg-gray-600 rounded-lg hover:bg-gray-500"
-              >
-                編集
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(history)}
+                  className="px-3 py-1 text-sm bg-gray-600 rounded-lg hover:bg-gray-500"
+                >
+                  <PenLine className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(history)}
+                  className="px-3 py-1 text-sm bg-gray-600 rounded-lg hover:bg-gray-500"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
             </div>
             {history.memo && <p className="text-sm text-gray-300">{history.memo}</p>}
           </div>
@@ -105,6 +155,26 @@ export const LoanHistoryList = ({
             <span className="text-2xl">+</span>
           </button>
         )
+      )}
+
+      {editingHistory && (
+        <LoanHistoryEditForm
+          loanId={loanId}
+          history={editingHistory}
+          onCancel={() => setEditingHistory(null)}
+          onSuccess={async () => {
+            await Promise.all([refetchHistories(), refetchLoan()]);
+            setEditingHistory(null);
+          }}
+        />
+      )}
+
+      {deletingHistory && (
+        <DeleteConfirmationModal
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeletingHistory(null)}
+          isLoading={isDeleting}
+        />
       )}
     </div>
   );
