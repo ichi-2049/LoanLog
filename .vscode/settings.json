@@ -3,6 +3,7 @@
         "datasource",
         "NEXTAUTH",
         "supabase",
+        "tseslint",
         "verificationtokens"
     ]
 }
