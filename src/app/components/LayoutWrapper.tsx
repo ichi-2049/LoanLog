@@ -15,12 +15,8 @@ export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
 
   const getTitle = (path: string) => {
     switch (path) {
-      case '/':
-        return 'ローン一覧';
       case '/friends':
         return '友達';
-      case '/loan/register':
-        return 'ローン登録';
       case '/settings':
         return '設定';
       default:

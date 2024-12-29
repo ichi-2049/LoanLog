@@ -79,3 +79,38 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: Props
+) {
+  const { id } = await params;
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return NextResponse.json(
+      { success: false, error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  try {
+    // トランザクションで関連する支払い履歴とローンを削除
+    await prisma.$transaction([
+      prisma.loanHistory.deleteMany({
+        where: { loan_id: id },
+      }),
+      prisma.loan.delete({
+        where: { loan_id: id },
+      }),
+    ]);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete loan' },
+      { status: 500 }
+    );
+  }
+}
