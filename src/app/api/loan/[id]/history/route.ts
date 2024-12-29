@@ -3,10 +3,23 @@ import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: Props
 ) {
+  // パラメータを非同期で取得
+  const { id } = await params;
+  if (!id) {
+    return NextResponse.json(
+      { success: false, error: "Loan ID is required" },
+      { status: 400 }
+    );
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json(
@@ -17,7 +30,7 @@ export async function GET(
 
   try {
     const histories = await prisma.loanHistory.findMany({
-      where: { loan_id: params.id },
+      where: { loan_id: id },
       orderBy: { paid_at: 'desc' },
     });
 
@@ -33,8 +46,17 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: Props
 ) {
+  // パラメータを非同期で取得
+  const { id } = await params;
+  if (!id) {
+    return NextResponse.json(
+      { success: false, error: "Loan ID is required" },
+      { status: 400 }
+    );
+  }
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json(
@@ -47,7 +69,7 @@ export async function POST(
     const { paid_at, paid_amount, memo } = await request.json();
 
     const loan = await prisma.loan.findUnique({
-      where: { loan_id: params.id },
+      where: { loan_id: id },
     });
 
     if (!loan) {
@@ -61,14 +83,14 @@ export async function POST(
     const [history] = await prisma.$transaction([
       prisma.loanHistory.create({
         data: {
-          loan_id: params.id,
+          loan_id: id,
           paid_at: new Date(paid_at),
           paid_amount,
           memo,
         },
       }),
       prisma.loan.update({
-        where: { loan_id: params.id },
+        where: { loan_id: id },
         data: {
           remaining_amount: loan.remaining_amount - paid_amount,
           status: loan.remaining_amount - paid_amount <= 0 ? 'PAID' : 'PAYING',
