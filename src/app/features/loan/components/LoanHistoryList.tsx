@@ -6,41 +6,43 @@ import { useLoan } from '../hooks/useLoan';
 import { LoanHistoryForm } from './LoanHistoryForm';
 
 interface LoanHistoryListProps {
-    loanId: string;
-    initialTitle: string;
-    initialTotalAmount: number;
-    initialRemainingAmount: number;
-    initialPartnerName: string | null;
-    isCreditor: boolean;  // 追加
+  loanId: string;
+  initialTitle: string;
+  initialTotalAmount: number;
+  initialRemainingAmount: number;
+  initialPartnerName: string | null;
+  isCreditor: boolean;
+}
+
+export const LoanHistoryList = ({
+  loanId,
+  initialTitle,
+  initialTotalAmount,
+  initialRemainingAmount,
+  initialPartnerName,
+  isCreditor,
+}: LoanHistoryListProps) => {
+  const { histories, isLoading: isLoadingHistories, refetch: refetchHistories } = useLoanHistory(loanId);
+  const { loan, isLoading: isLoadingLoan, refetch: refetchLoan } = useLoan(loanId);
+  const [showForm, setShowForm] = useState(false);
+
+  const handleSuccess = async () => {
+    await Promise.all([refetchHistories(), refetchLoan()]);
+    setShowForm(false);
+  };
+
+  if (isLoadingHistories || isLoadingLoan) {
+    return <div className="flex justify-center p-8">Loading...</div>;
   }
-  
-  export const LoanHistoryList = ({
-    loanId,
-    initialTitle,
-    initialTotalAmount,
-    initialRemainingAmount,
-    initialPartnerName,
-    isCreditor,  // 追加
-  }: LoanHistoryListProps) => {
-    const { histories, isLoading: isLoadingHistories, refetch: refetchHistories } = useLoanHistory(loanId);
-    const { loan, isLoading: isLoadingLoan, refetch: refetchLoan } = useLoan(loanId);
-    const [showForm, setShowForm] = useState(false);
-  
-    const handleSuccess = async () => {
-      await Promise.all([refetchHistories(), refetchLoan()]);
-      setShowForm(false);
-    };
-  
-    if (isLoadingHistories || isLoadingLoan) {
-      return <div className="flex justify-center p-8">Loading...</div>;
-    }
-  
-    const currentTitle = loan?.title ?? initialTitle;
-    const currentTotalAmount = loan?.total_amount ?? initialTotalAmount;
-    const currentRemainingAmount = loan?.remaining_amount ?? initialRemainingAmount;
-    const currentPartnerName = loan ? 
-      (isCreditor ? loan.debtor.name : loan.creditor.name) ?? '不明' : 
-      initialPartnerName ?? '不明';
+
+  const currentTitle = loan?.title ?? initialTitle;
+  const currentTotalAmount = loan?.total_amount ?? initialTotalAmount;
+  const currentRemainingAmount = loan?.remaining_amount ?? initialRemainingAmount;
+  const currentPartnerName = loan ? 
+    (isCreditor ? loan.debtor.name : loan.creditor.name) ?? '不明' : 
+    initialPartnerName ?? '不明';
+
+  const isFullyPaid = currentRemainingAmount <= 0;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -95,12 +97,14 @@ interface LoanHistoryListProps {
           onSuccess={handleSuccess}
         />
       ) : (
-        <button
-          onClick={() => setShowForm(true)}
-          className="fixed bottom-20 right-4 w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg"
-        >
-          <span className="text-2xl">+</span>
-        </button>
+        !isFullyPaid && (
+          <button
+            onClick={() => setShowForm(true)}
+            className="fixed bottom-20 right-4 w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg"
+          >
+            <span className="text-2xl">+</span>
+          </button>
+        )
       )}
     </div>
   );
