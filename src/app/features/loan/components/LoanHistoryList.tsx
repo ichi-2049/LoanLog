@@ -6,37 +6,41 @@ import { useLoan } from '../hooks/useLoan';
 import { LoanHistoryForm } from './LoanHistoryForm';
 
 interface LoanHistoryListProps {
-  loanId: string;
-  initialTitle: string;
-  initialTotalAmount: number;
-  initialRemainingAmount: number;
-  initialPartnerName: string;
-}
-
-export const LoanHistoryList = ({
-  loanId,
-  initialTitle,
-  initialTotalAmount,
-  initialRemainingAmount,
-  initialPartnerName,
-}: LoanHistoryListProps) => {
-  const { histories, isLoading: isLoadingHistories, refetch: refetchHistories } = useLoanHistory(loanId);
-  const { loan, isLoading: isLoadingLoan, refetch: refetchLoan } = useLoan(loanId);
-  const [showForm, setShowForm] = useState(false);
-
-  const handleSuccess = async () => {
-    await Promise.all([refetchHistories(), refetchLoan()]);
-    setShowForm(false);
-  };
-
-  if (isLoadingHistories || isLoadingLoan) {
-    return <div className="flex justify-center p-8">Loading...</div>;
+    loanId: string;
+    initialTitle: string;
+    initialTotalAmount: number;
+    initialRemainingAmount: number;
+    initialPartnerName: string | null;
+    isCreditor: boolean;  // 追加
   }
-
-  const currentTitle = loan?.title ?? initialTitle;
-  const currentTotalAmount = loan?.total_amount ?? initialTotalAmount;
-  const currentRemainingAmount = loan?.remaining_amount ?? initialRemainingAmount;
-  const currentPartnerName = loan?.creditor.name ?? initialPartnerName;
+  
+  export const LoanHistoryList = ({
+    loanId,
+    initialTitle,
+    initialTotalAmount,
+    initialRemainingAmount,
+    initialPartnerName,
+    isCreditor,  // 追加
+  }: LoanHistoryListProps) => {
+    const { histories, isLoading: isLoadingHistories, refetch: refetchHistories } = useLoanHistory(loanId);
+    const { loan, isLoading: isLoadingLoan, refetch: refetchLoan } = useLoan(loanId);
+    const [showForm, setShowForm] = useState(false);
+  
+    const handleSuccess = async () => {
+      await Promise.all([refetchHistories(), refetchLoan()]);
+      setShowForm(false);
+    };
+  
+    if (isLoadingHistories || isLoadingLoan) {
+      return <div className="flex justify-center p-8">Loading...</div>;
+    }
+  
+    const currentTitle = loan?.title ?? initialTitle;
+    const currentTotalAmount = loan?.total_amount ?? initialTotalAmount;
+    const currentRemainingAmount = loan?.remaining_amount ?? initialRemainingAmount;
+    const currentPartnerName = loan ? 
+      (isCreditor ? loan.debtor.name : loan.creditor.name) ?? '不明' : 
+      initialPartnerName ?? '不明';
 
   return (
     <div className="max-w-4xl mx-auto p-4">

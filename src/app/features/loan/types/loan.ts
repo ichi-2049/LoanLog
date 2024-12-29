@@ -13,6 +13,7 @@ export type Loan = {
     debtor: {
       name: string;
     };
+    isCreditor: boolean;
   };
  
   export type Friend = {

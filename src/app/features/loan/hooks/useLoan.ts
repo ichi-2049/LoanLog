@@ -1,3 +1,4 @@
+// app/features/loan/hooks/useLoan.ts
 import { useState, useEffect, useCallback } from 'react';
 import { Loan } from '../types/loan';
 
