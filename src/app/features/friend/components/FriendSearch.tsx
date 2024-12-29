@@ -83,12 +83,11 @@ export const FriendSearch = () => {
         
         {/* IDとボタン */}
         <div className="flex items-center gap-2 mt-2">
-          <p className="text-sm text-gray-400">ID: {session?.user?.id}</p>
           <button
             onClick={handleCopyId}
             className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
           >
-            copy
+            IDをコピー
           </button>
         </div>
       </div>
