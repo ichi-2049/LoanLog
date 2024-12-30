@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { LoanHistory } from '../types/loanHistory';
+import { useState } from "react";
+import { LoanHistory } from "../types/loanHistory";
 
 interface LoanHistoryEditFormProps {
   loanId: string;
@@ -18,9 +18,9 @@ export const LoanHistoryEditForm = ({
 }: LoanHistoryEditFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    paid_at: new Date(history.paid_at).toISOString().split('T')[0],
+    paid_at: new Date(history.paid_at).toISOString().split("T")[0],
     paid_amount: history.paid_amount.toString(),
-    memo: history.memo || '',
+    memo: history.memo || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,25 +28,28 @@ export const LoanHistoryEditForm = ({
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/loan/${loanId}/history/${history.loan_history_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `/api/loan/${loanId}/history/${history.loan_history_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            paid_amount: Number(formData.paid_amount),
+          }),
         },
-        body: JSON.stringify({
-          ...formData,
-          paid_amount: Number(formData.paid_amount),
-        }),
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('更新に失敗しました');
+        throw new Error("更新に失敗しました");
       }
 
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert('更新に失敗しました');
+      alert("更新に失敗しました");
     } finally {
       setIsLoading(false);
     }
@@ -54,9 +57,12 @@ export const LoanHistoryEditForm = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 rounded-lg p-6 w-full max-w-md"
+      >
         <h3 className="text-xl font-bold text-white mb-4">支払い編集</h3>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
@@ -83,7 +89,10 @@ export const LoanHistoryEditForm = ({
               className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white"
               value={formData.paid_amount}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, paid_amount: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  paid_amount: e.target.value,
+                }))
               }
             />
           </div>

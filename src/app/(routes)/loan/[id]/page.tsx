@@ -1,8 +1,8 @@
-import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { LoanHistoryList } from '@/app/features/loan/components/LoanHistoryList';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { LoanHistoryList } from "@/app/features/loan/components/LoanHistoryList";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 interface LoanDetailPageProps {
   params: Promise<{ id: string }>;
@@ -11,7 +11,7 @@ interface LoanDetailPageProps {
 async function getLoanDetail(id: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
 
   const currentUser = await prisma.user.findUnique({
@@ -20,7 +20,7 @@ async function getLoanDetail(id: string) {
   });
 
   if (!currentUser) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   const loan = await prisma.loan.findUnique({
@@ -66,7 +66,7 @@ export default async function LoanDetailPage({ params }: LoanDetailPageProps) {
         initialTitle={loan.title}
         initialTotalAmount={loan.total_amount}
         initialRemainingAmount={loan.remaining_amount}
-        initialPartnerName={loan.partnerName || '不明'}
+        initialPartnerName={loan.partnerName || "不明"}
         isCreditor={loan.isCreditor}
       />
     </div>

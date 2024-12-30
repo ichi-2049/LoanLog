@@ -1,10 +1,10 @@
 // app/features/loan/components/LoanRegistrationForm.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useFriends } from '../hooks/useFriends';
-import { useLoanRegistration } from '../hooks/useLoanRegistration';
-import { LoanViewType } from '../types/loan';
+import { useState } from "react";
+import { useFriends } from "../hooks/useFriends";
+import { useLoanRegistration } from "../hooks/useLoanRegistration";
+import { LoanViewType } from "../types/loan";
 
 type FormData = {
   title: string;
@@ -17,10 +17,10 @@ export const LoanRegistrationForm = () => {
   const { friends, isLoading: isFriendsLoading } = useFriends();
   const { registerLoan, isLoading: isRegistering } = useLoanRegistration();
   const [formData, setFormData] = useState<FormData>({
-    title: '',
-    amount: '',
-    friendId: '',
-    type: 'debtor',
+    title: "",
+    amount: "",
+    friendId: "",
+    type: "debtor",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -53,9 +53,7 @@ export const LoanRegistrationForm = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-200">
-          金額
-        </label>
+        <label className="block text-sm font-medium text-gray-200">金額</label>
         <input
           type="number"
           required
@@ -68,9 +66,7 @@ export const LoanRegistrationForm = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-200">
-          相手
-        </label>
+        <label className="block text-sm font-medium text-gray-200">相手</label>
         <select
           required
           className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white"
@@ -89,18 +85,19 @@ export const LoanRegistrationForm = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-200">
-          種別
-        </label>
+        <label className="block text-sm font-medium text-gray-200">種別</label>
         <div className="flex gap-4">
           <label className="flex items-center">
             <input
               type="radio"
               name="type"
               value="debtor"
-              checked={formData.type === 'debtor'}
+              checked={formData.type === "debtor"}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, type: e.target.value as LoanViewType }))
+                setFormData((prev) => ({
+                  ...prev,
+                  type: e.target.value as LoanViewType,
+                }))
               }
             />
             <span className="ml-2 text-white">借りる</span>
@@ -110,9 +107,12 @@ export const LoanRegistrationForm = () => {
               type="radio"
               name="type"
               value="creditor"
-              checked={formData.type === 'creditor'}
+              checked={formData.type === "creditor"}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, type: e.target.value as LoanViewType }))
+                setFormData((prev) => ({
+                  ...prev,
+                  type: e.target.value as LoanViewType,
+                }))
               }
             />
             <span className="ml-2 text-white">貸す</span>

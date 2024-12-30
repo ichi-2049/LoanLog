@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 interface LoanEditFormProps {
   loanId: string;
@@ -29,9 +29,9 @@ export const LoanEditForm = ({
 
     try {
       const response = await fetch(`/api/loan/${loanId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title: formData.title,
@@ -40,13 +40,13 @@ export const LoanEditForm = ({
       });
 
       if (!response.ok) {
-        throw new Error('更新に失敗しました');
+        throw new Error("更新に失敗しました");
       }
 
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert('更新に失敗しました');
+      alert("更新に失敗しました");
     } finally {
       setIsLoading(false);
     }
@@ -54,9 +54,12 @@ export const LoanEditForm = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 rounded-lg p-6 w-full max-w-md"
+      >
         <h3 className="text-xl font-bold text-white mb-4">ローン情報編集</h3>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
@@ -83,7 +86,10 @@ export const LoanEditForm = ({
               className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white"
               value={formData.total_amount}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, total_amount: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  total_amount: e.target.value,
+                }))
               }
             />
           </div>

@@ -1,16 +1,18 @@
-import { useState } from 'react';
-import { LoanHistoryFormData } from '../types/loanHistory';
+import { useState } from "react";
+import { LoanHistoryFormData } from "../types/loanHistory";
 
 export const useLoanHistoryRegistration = (loanId: string) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const registerHistory = async (data: LoanHistoryFormData): Promise<boolean> => {
+  const registerHistory = async (
+    data: LoanHistoryFormData,
+  ): Promise<boolean> => {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/loan/${loanId}/history`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -18,13 +20,13 @@ export const useLoanHistoryRegistration = (loanId: string) => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || '登録に失敗しました');
+        throw new Error(result.error || "登録に失敗しました");
       }
 
       return true;
     } catch (error) {
       console.error(error);
-      alert('登録に失敗しました');
+      alert("登録に失敗しました");
       return false;
     } finally {
       setIsLoading(false);

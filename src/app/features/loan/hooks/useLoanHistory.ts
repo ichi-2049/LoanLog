@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { LoanHistory } from '../types/loanHistory';
+import { useState, useEffect, useCallback } from "react";
+import { LoanHistory } from "../types/loanHistory";
 
 export const useLoanHistory = (loanId: string) => {
   const [histories, setHistories] = useState<LoanHistory[]>([]);

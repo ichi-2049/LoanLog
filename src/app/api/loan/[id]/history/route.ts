@@ -1,67 +1,61 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export async function GET(
-  request: Request,
-  { params }: Props
-) {
+export async function GET(request: Request, { params }: Props) {
   // パラメータを非同期で取得
   const { id } = await params;
   if (!id) {
     return NextResponse.json(
       { success: false, error: "Loan ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
   try {
     const histories = await prisma.loanHistory.findMany({
       where: { loan_id: id },
-      orderBy: { paid_at: 'desc' },
+      orderBy: { paid_at: "desc" },
     });
 
     return NextResponse.json({ success: true, histories });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch histories' },
-      { status: 500 }
+      { success: false, error: "Failed to fetch histories" },
+      { status: 500 },
     );
   }
 }
 
-export async function POST(
-  request: Request,
-  { params }: Props
-) {
+export async function POST(request: Request, { params }: Props) {
   // パラメータを非同期で取得
   const { id } = await params;
   if (!id) {
     return NextResponse.json(
       { success: false, error: "Loan ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
@@ -74,8 +68,8 @@ export async function POST(
 
     if (!loan) {
       return NextResponse.json(
-        { success: false, error: 'Loan not found' },
-        { status: 404 }
+        { success: false, error: "Loan not found" },
+        { status: 404 },
       );
     }
 
@@ -93,7 +87,7 @@ export async function POST(
         where: { loan_id: id },
         data: {
           remaining_amount: loan.remaining_amount - paid_amount,
-          status: loan.remaining_amount - paid_amount <= 0 ? 'PAID' : 'PAYING',
+          status: loan.remaining_amount - paid_amount <= 0 ? "PAID" : "PAYING",
         },
       }),
     ]);
@@ -102,8 +96,8 @@ export async function POST(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to create history' },
-      { status: 500 }
+      { success: false, error: "Failed to create history" },
+      { status: 500 },
     );
   }
 }

@@ -3,17 +3,17 @@
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
       <div className="bg-gray-800 p-8 rounded-lg w-[320px] text-white">
         <h1 className="text-2xl font-bold mb-8 text-center">LoanLog</h1>
-        
+
         <div className="space-y-4">
           <p className="text-gray-300 text-center text-sm">
-            簡単にローンを管理できるアプリです。<br />
+            簡単にローンを管理できるアプリです。
+            <br />
           </p>
-          
+
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
             className="w-full py-3 px-4 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2"

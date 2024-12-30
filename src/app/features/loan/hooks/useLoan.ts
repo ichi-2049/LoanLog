@@ -1,6 +1,6 @@
 // app/features/loan/hooks/useLoan.ts
-import { useState, useEffect, useCallback } from 'react';
-import { Loan } from '../types/loan';
+import { useState, useEffect, useCallback } from "react";
+import { Loan } from "../types/loan";
 
 export const useLoan = (loanId: string) => {
   const [loan, setLoan] = useState<Loan | null>(null);

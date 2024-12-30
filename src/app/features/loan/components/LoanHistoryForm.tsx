@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useLoanHistoryRegistration } from '../hooks/useLoanHistoryRegistration';
+import { useState } from "react";
+import { useLoanHistoryRegistration } from "../hooks/useLoanHistoryRegistration";
 
 interface LoanHistoryFormProps {
   loanId: string;
@@ -9,12 +9,16 @@ interface LoanHistoryFormProps {
   onSuccess: () => Promise<void>;
 }
 
-export const LoanHistoryForm = ({ loanId, onCancel, onSuccess }: LoanHistoryFormProps) => {
+export const LoanHistoryForm = ({
+  loanId,
+  onCancel,
+  onSuccess,
+}: LoanHistoryFormProps) => {
   const { registerHistory, isLoading } = useLoanHistoryRegistration(loanId);
   const [formData, setFormData] = useState({
-    paid_at: new Date().toISOString().split('T')[0],
-    paid_amount: '',
-    memo: '',
+    paid_at: new Date().toISOString().split("T")[0],
+    paid_amount: "",
+    memo: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,9 +35,12 @@ export const LoanHistoryForm = ({ loanId, onCancel, onSuccess }: LoanHistoryForm
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 rounded-lg p-6 w-full max-w-md"
+      >
         <h3 className="text-xl font-bold text-white mb-4">支払い登録</h3>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
@@ -60,7 +67,10 @@ export const LoanHistoryForm = ({ loanId, onCancel, onSuccess }: LoanHistoryForm
               className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white"
               value={formData.paid_amount}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, paid_amount: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  paid_amount: e.target.value,
+                }))
               }
             />
           </div>

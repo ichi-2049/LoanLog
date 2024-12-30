@@ -61,7 +61,10 @@ export default [
       // TypeScript固有のルール
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/ban-ts-comment": "warn",
     },
   },
@@ -74,27 +77,20 @@ export default [
       "react-hooks": pluginReactHooks,
       "@next/next": pluginNextJs,
     },
-    ignores: [
-      "node_modules/",
-      "dist/",
-      "build/",
-      ".next/",
-      "out/",
-      "public/",
-    ],
+    ignores: ["node_modules/", "dist/", "build/", ".next/", "out/", "public/"],
     rules: {
       // React関連
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
-      
+
       // コーディングスタイル
-      "no-console": ["warn", { "allow": ["warn", "error"] }],
-      "semi": ["error", "always"],
-      "quotes": ["error", "single"],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      semi: ["error", "always"],
+      quotes: ["error", "single"],
       "comma-dangle": ["error", "always-multiline"],
-      
+
       // Next.js固有のルール
       "@next/next/no-html-link-for-pages": "error",
       "@next/next/no-img-element": "error",

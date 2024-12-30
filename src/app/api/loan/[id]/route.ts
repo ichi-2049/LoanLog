@@ -1,23 +1,20 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export async function GET(
-  request: Request,
-  { params }: Props
-) {
+export async function GET(request: Request, { params }: Props) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
-  
+
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
@@ -42,8 +39,8 @@ export async function GET(
 
     if (!loan) {
       return NextResponse.json(
-        { success: false, error: 'Loan not found' },
-        { status: 404 }
+        { success: false, error: "Loan not found" },
+        { status: 404 },
       );
     }
 
@@ -54,8 +51,8 @@ export async function GET(
 
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
+        { success: false, error: "User not found" },
+        { status: 404 },
       );
     }
 
@@ -73,23 +70,20 @@ export async function GET(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch loan' },
-      { status: 500 }
+      { success: false, error: "Failed to fetch loan" },
+      { status: 500 },
     );
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: Props
-) {
+export async function PUT(request: Request, { params }: Props) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
@@ -102,7 +96,10 @@ export async function PUT(
       select: { paid_amount: true },
     });
 
-    const totalPaid = histories.reduce((sum, history) => sum + history.paid_amount, 0);
+    const totalPaid = histories.reduce(
+      (sum, history) => sum + history.paid_amount,
+      0,
+    );
     // 残額を計算し、0円未満の場合は0円に設定
     const remaining_amount = Math.max(0, total_amount - totalPaid);
 
@@ -113,7 +110,7 @@ export async function PUT(
         total_amount,
         remaining_amount,
         // 残額が0円の場合はPAIDに更新
-        status: remaining_amount === 0 ? 'PAID' : 'PAYING',
+        status: remaining_amount === 0 ? "PAID" : "PAYING",
       },
     });
 
@@ -121,23 +118,20 @@ export async function PUT(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update loan' },
-      { status: 500 }
+      { success: false, error: "Failed to update loan" },
+      { status: 500 },
     );
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: Props
-) {
+export async function DELETE(request: Request, { params }: Props) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
@@ -156,8 +150,8 @@ export async function DELETE(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete loan' },
-      { status: 500 }
+      { success: false, error: "Failed to delete loan" },
+      { status: 500 },
     );
   }
 }

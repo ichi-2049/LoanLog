@@ -1,24 +1,21 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 type Props = {
   params: Promise<{ id: string; historyId: string }>;
 };
 
 // 履歴更新API
-export async function PUT(
-  request: Request,
-  { params }: Props
-) {
+export async function PUT(request: Request, { params }: Props) {
   const { id, historyId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
@@ -33,8 +30,8 @@ export async function PUT(
 
     if (!currentHistory) {
       return NextResponse.json(
-        { success: false, error: 'History not found' },
-        { status: 404 }
+        { success: false, error: "History not found" },
+        { status: 404 },
       );
     }
 
@@ -63,24 +60,21 @@ export async function PUT(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update history' },
-      { status: 500 }
+      { success: false, error: "Failed to update history" },
+      { status: 500 },
     );
   }
 }
 
 // 履歴削除API
-export async function DELETE(
-  request: Request,
-  { params }: Props
-) {
+export async function DELETE(request: Request, { params }: Props) {
   const { id, historyId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
@@ -93,8 +87,8 @@ export async function DELETE(
 
     if (!historyToDelete) {
       return NextResponse.json(
-        { success: false, error: 'History not found' },
-        { status: 404 }
+        { success: false, error: "History not found" },
+        { status: 404 },
       );
     }
 
@@ -106,8 +100,9 @@ export async function DELETE(
       prisma.loan.update({
         where: { loan_id: id },
         data: {
-          remaining_amount: historyToDelete.loan.remaining_amount + historyToDelete.paid_amount,
-          status: 'PAYING',
+          remaining_amount:
+            historyToDelete.loan.remaining_amount + historyToDelete.paid_amount,
+          status: "PAYING",
         },
       }),
     ]);
@@ -116,8 +111,8 @@ export async function DELETE(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete history' },
-      { status: 500 }
+      { success: false, error: "Failed to delete history" },
+      { status: 500 },
     );
   }
 }

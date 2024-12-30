@@ -1,11 +1,14 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 type FloatingActionButtonProps = {
   href: string;
   label?: string;
 };
 
-export const FloatingActionButton = ({ href, label = '+' }: FloatingActionButtonProps) => {
+export const FloatingActionButton = ({
+  href,
+  label = "+",
+}: FloatingActionButtonProps) => {
   return (
     <Link
       href={href}

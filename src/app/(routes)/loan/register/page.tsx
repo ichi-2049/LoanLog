@@ -1,4 +1,4 @@
-import { LoanRegistrationForm } from '@/app/features/loan/components/LoanRegistrationForm';
+import { LoanRegistrationForm } from "@/app/features/loan/components/LoanRegistrationForm";
 
 export default function LoanRegistrationPage() {
   return (

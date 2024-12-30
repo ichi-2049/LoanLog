@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import { SessionProvider } from 'next-auth/react';
-import { Session } from 'next-auth';
-import { LayoutWrapper } from './components/LayoutWrapper';
+import { ReactNode } from "react";
+import { SessionProvider } from "next-auth/react";
+import { Session } from "next-auth";
+import { LayoutWrapper } from "./components/LayoutWrapper";
 
 interface ProvidersProps {
   children: ReactNode;
@@ -13,9 +13,7 @@ interface ProvidersProps {
 export function Providers({ children, session }: ProvidersProps) {
   return (
     <SessionProvider session={session}>
-      <LayoutWrapper>
-        {children}
-      </LayoutWrapper>
+      <LayoutWrapper>{children}</LayoutWrapper>
     </SessionProvider>
   );
 }

@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
-import { authOptions } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
-    return new NextResponse('Unauthorized', { status: 401 });
+    return new NextResponse("Unauthorized", { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
-  const type = searchParams.get('type') as 'creditor' | 'debtor';
+  const type = searchParams.get("type") as "creditor" | "debtor";
 
   try {
     const user = await prisma.user.findUnique({
@@ -18,12 +18,12 @@ export async function GET(request: Request) {
     });
 
     if (!user) {
-      return new NextResponse('User not found', { status: 404 });
+      return new NextResponse("User not found", { status: 404 });
     }
 
     const loans = await prisma.loan.findMany({
       where: {
-        [type === 'creditor' ? 'creditor_uid' : 'debtor_uid']: user.id,
+        [type === "creditor" ? "creditor_uid" : "debtor_uid"]: user.id,
       },
       include: {
         creditor: {
@@ -34,14 +34,14 @@ export async function GET(request: Request) {
         },
       },
       orderBy: {
-        created_at: 'desc',
+        created_at: "desc",
       },
     });
 
     return NextResponse.json(loans);
   } catch (error) {
-    console.error('Error fetching loans:', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    console.error("Error fetching loans:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
@@ -50,8 +50,8 @@ export async function POST(request: Request) {
 
   if (!session?.user?.email) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
     );
   }
 
@@ -64,8 +64,8 @@ export async function POST(request: Request) {
 
     if (!currentUser) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
+        { success: false, error: "User not found" },
+        { status: 404 },
       );
     }
 
@@ -75,8 +75,8 @@ export async function POST(request: Request) {
         total_amount: amount,
         remaining_amount: amount,
         registered_at: new Date(),
-        creditor_uid: type === 'creditor' ? currentUser.id : friendId,
-        debtor_uid: type === 'debtor' ? currentUser.id : friendId,
+        creditor_uid: type === "creditor" ? currentUser.id : friendId,
+        debtor_uid: type === "debtor" ? currentUser.id : friendId,
       },
     });
 
@@ -84,8 +84,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { success: false, error: 'Failed to create loan' },
-      { status: 500 }
+      { success: false, error: "Failed to create loan" },
+      { status: 500 },
     );
   }
 }
