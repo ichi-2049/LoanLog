@@ -12,9 +12,6 @@ export default async function HomePage() {
 
   return (
     <div className="p-4">
-      <div className="mb-6 text-white">
-        {/* <h2 className="text-xl">ようこそ、{session.user?.name} さん！</h2> */}
-      </div>
       <LoanList />
     </div>
   );

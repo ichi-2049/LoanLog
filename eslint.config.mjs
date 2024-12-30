@@ -1,33 +1,116 @@
-import globals from "globals"; // グローバル変数設定
-import pluginJs from "@eslint/js"; // JavaScript推奨設定
-import tseslint from "typescript-eslint"; // TypeScript用の設定
-import pluginReact from "eslint-plugin-react"; // React用の設定
-import prettier from "eslint-config-prettier"; // Prettier設定を無効化
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import tseslintPlugin from "@typescript-eslint/eslint-plugin";
+import tseslintParser from "@typescript-eslint/parser";
+import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import pluginNextJs from "@next/eslint-plugin-next";
+import prettier from "eslint-config-prettier";
 
-/** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
   {
-    files: ["**/*.{js,mjs,cjs,ts,tsx,jsx}"], // 対象ファイルを指定
+    files: ["**/*.{js,mjs,cjs}"],
     languageOptions: {
-      parser: tseslint.parser, // TypeScript用パーサー
-      globals: globals.browser, // ブラウザ環境のグローバル変数
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
     },
     plugins: {
-      react: pluginReact, // Reactプラグイン
-      typescript: tseslint, // TypeScriptプラグイン
+      react: pluginReact,
+      "react-hooks": pluginReactHooks,
+      "@next/next": pluginNextJs,
     },
     rules: {
-      // 各種推奨ルールを適用
-      ...pluginJs.configs.recommended.rules, // JavaScript推奨ルール
-      ...tseslint.configs.recommended.rules, // TypeScript推奨ルール
-      ...pluginReact.configs.flat.recommended.rules, // React推奨ルール
-      "no-console": "warn", // consoleの使用を警告
+      ...pluginJs.configs.recommended.rules,
+      ...pluginReact.configs.flat.recommended.rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      ...pluginNextJs.configs.recommended.rules,
     },
   },
+
+  // TypeScript specific configuration
   {
-    // Prettierによる競合するフォーマットルールを無効化
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tseslintParser,
+      parserOptions: {
+        project: true,
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslintPlugin,
+      react: pluginReact,
+      "react-hooks": pluginReactHooks,
+      "@next/next": pluginNextJs,
+    },
+    rules: {
+      ...tseslintPlugin.configs.recommended.rules,
+      // TypeScript固有のルール
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/ban-ts-comment": "warn",
+    },
+  },
+
+  // Shared rules for all files
+  {
+    files: ["**/*.{js,mjs,cjs,ts,tsx,jsx}"],
+    plugins: {
+      react: pluginReact,
+      "react-hooks": pluginReactHooks,
+      "@next/next": pluginNextJs,
+    },
+    ignores: [
+      "node_modules/",
+      "dist/",
+      "build/",
+      ".next/",
+      "out/",
+      "public/",
+    ],
+    rules: {
+      // React関連
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      
+      // コーディングスタイル
+      "no-console": ["warn", { "allow": ["warn", "error"] }],
+      "semi": ["error", "always"],
+      "quotes": ["error", "single"],
+      "comma-dangle": ["error", "always-multiline"],
+      
+      // Next.js固有のルール
+      "@next/next/no-html-link-for-pages": "error",
+      "@next/next/no-img-element": "error",
+      "@next/next/no-unwanted-polyfillio": "warn",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
+
+  // Prettier integration
+  {
     rules: {
       ...prettier.rules,
     },
   },
-]
+];

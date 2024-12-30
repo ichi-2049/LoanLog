@@ -1,4 +1,3 @@
-// app/(routes)/loan/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { LoanHistoryList } from '@/app/features/loan/components/LoanHistoryList';
