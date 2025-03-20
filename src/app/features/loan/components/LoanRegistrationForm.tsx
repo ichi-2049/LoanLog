@@ -1,4 +1,3 @@
-// app/features/loan/components/LoanRegistrationForm.tsx
 "use client";
 
 import { useState } from "react";
