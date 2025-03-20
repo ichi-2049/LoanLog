@@ -14,15 +14,14 @@ export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   const isLoginPage = pathname === "/login";
 
   const getTitle = (path: string) => {
-    switch (path) {
-      case "/friends":
-        return "友達";
-      case "/settings":
-        return "設定";
-      default:
-        return "ローン管理";
+    if (path.includes("/friends")) {
+      return "友達"
+    } else if (path.includes("/settings")) {
+      return "設定"
+    } else {
+      return "ローン管理"
     }
-  };
+  }
 
   return (
     <>
